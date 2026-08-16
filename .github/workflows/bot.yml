@@ -50,8 +50,6 @@ jobs:
 
           status=$?
 
-          # Exit code 124 is the expected timeout after the 8-minute
-          # scheduled runtime window. Treat it as a successful cycle.
           if [ "$status" -eq 124 ]; then
             echo "Bot runtime window completed normally."
             exit 0

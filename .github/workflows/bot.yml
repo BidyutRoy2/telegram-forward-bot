@@ -6,11 +6,16 @@ on:
   schedule:
     - cron: "*/10 * * * *"
 
+# Prevent multiple bot instances from running at the same time.
+concurrency:
+  group: hiddengem-telegram-forward-bot
+  cancel-in-progress: false
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
 
-    # The bot itself is intentionally stopped before the next scheduled run.
+    # The bot itself is intentionally stopped before the next scheduled cycle.
     timeout-minutes: 9
 
     env:
@@ -36,7 +41,13 @@ jobs:
         shell: bash
         run: |
           set +e
-          timeout --signal=SIGTERM --kill-after=30s 8m npm start
+
+          timeout \
+            --signal=SIGTERM \
+            --kill-after=30s \
+            8m \
+            npm start
+
           status=$?
 
           if [ "$status" -eq 124 ]; then
@@ -44,4 +55,5 @@ jobs:
             exit 0
           fi
 
+          echo "Bot exited with status: $status"
           exit "$status"

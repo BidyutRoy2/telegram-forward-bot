@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "*/10 * * * *"
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
 
-    timeout-minutes: 350
+    # The bot itself is intentionally stopped before the next scheduled run.
+    timeout-minutes: 9
 
     env:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -31,5 +32,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Start Telegram bot
-        run: npm start
+      - name: Run Telegram bot for 8 minutes
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=SIGTERM --kill-after=30s 8m npm start
+          status=$?
+
+          if [ "$status" -eq 124 ]; then
+            echo "Bot runtime window completed normally."
+            exit 0
+          fi
+
+          exit "$status"

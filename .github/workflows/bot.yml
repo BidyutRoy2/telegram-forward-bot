@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: "*/10 * * * *"
 
-# Prevent multiple bot instances from running at the same time.
+# Prevent overlapping bot instances.
 concurrency:
   group: hiddengem-telegram-forward-bot
   cancel-in-progress: false
@@ -15,7 +15,7 @@ jobs:
   run-bot:
     runs-on: ubuntu-latest
 
-    # The bot itself is intentionally stopped before the next scheduled cycle.
+    # The bot runtime is intentionally shorter than the 10-minute schedule.
     timeout-minutes: 9
 
     env:
@@ -26,12 +26,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -50,6 +50,8 @@ jobs:
 
           status=$?
 
+          # Exit code 124 is the expected timeout after the 8-minute
+          # scheduled runtime window. Treat it as a successful cycle.
           if [ "$status" -eq 124 ]; then
             echo "Bot runtime window completed normally."
             exit 0

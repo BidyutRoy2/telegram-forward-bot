@@ -1,6 +1,4 @@
-# HiddenGem Telegram Forward Bot
-
-> Production-oriented Telegram channel auto-forwarding bot powered by Node.js and GitHub Actions.
+# HiddenGem Telegram channel auto-forwarding bot powered by Node.js and GitHub Actions.
 
 [![GitHub Actions](https://img.shields.io/github/actions/workflow/status/BidyutRoy2/telegram-forward-bot/bot.yml?label=GitHub%20Actions\&logo=github)](https://github.com/BidyutRoy2/telegram-forward-bot/actions)
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js\&logoColor=white)](https://nodejs.org/)
